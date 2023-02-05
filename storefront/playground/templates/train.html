@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <title>Training</title>
+</head>
+<style>
+    html,body{
+        margin: 0 auto;
+        width: 100%;
+        height: 100%;
+        background-color: aliceblue;
+    }
+    
+    #graphs{
+        margin-left: 2.5%;
+        width: 95%;
+        height: 85%;
+        margin-top: 6%;
+        overflow: hidden;
+    }
+
+    h4{
+        margin: 3%
+    }
+</style>
+<body>
+<div style="width: 65%; height: 100%; float: left; border-right: 2px solid black;">
+    <h1 style="position: fixed; margin-left: 20%; float: left;">Trained Data Representation</h1>
+    <div id="graphs">
+        <div id="{{stockName}}" style="width: 100%; height: 100%; float: left; overflow: hidden;">
+            
+        </div>
+        <div id="LSTM" style="width: 100%; height: 100%; float: left; overflow: hidden;">
+            
+        </div>
+        <div id="SVM" style="width: 100%; height: 100%; float: left; overflow: hidden;">
+            
+        </div>
+        <div id="linearReg" style="width: 100%; height: 100%; float: left; overflow: hidden;">
+            
+        </div>
+        <div id="KNN" style="width: 100%; height: 100%; float: left; overflow: hidden;">
+            
+        </div>
+    </div>
+    <div style="float: left; width: 38%; display: flex; justify-content: space-between; margin-left: 31%">
+        <button class="btns" onclick="move(0)" style="box-shadow: 0px 0px 4px 2px green; transition: 0.25s;">{{stockName}}</button>
+        <button class="btns" onclick="move(1)" style="transition: 0.25s;">LSTM</button>
+        <button class="btns" onclick="move(2)" style="transition: 0.25s;">SVM</button>
+        <button class="btns" onclick="move(3)" style="transition: 0.25s;">Linear Regression</button>
+        <button class="btns" onclick="move(4)" style="transition: 0.25s;">KNN</button>
+        <input id="name" type="hidden" value="{{stockName}}">
+    </div>
+</div>
+<div style="width: 34.85%; height: 100%; float: right">
+    <div style="width: 100%; height: 50%">
+        <h1 style="position: fixed; margin-left: 13.5%;">Metrics</h1>
+        <div style="width: 90%; height: 60%; margin-left: 5%; margin-top: 15%; float: left; overflow: hidden;">
+            <div style="width: 100%; height: 100%; float: left;" id="lstmmetric">
+                <h4>Max Error : {{lstmme}}</h4>
+                <h4>Mean Absolute Error : {{lstmmae}}</h4>
+                <h4>Mean Squared Error : {{lstmmse}}</h4>
+                <h4>Mean Absolute Percentage Error : {{lstmmape}}</h4>
+                <h4>Median Absolute Error : {{lstmMae}}</h4>
+                <h4>R2 Score : {{lstmrs}}</h4>
+            </div>
+            <div style="width: 100%; height: 100%; float: left;" id="svmmetric">
+                <h4>Max Error : {{svmme}}</h4>
+                <h4>Mean Absolute Error : {{svmmae}}</h4>
+                <h4>Mean Squared Error : {{svmmse}}</h4>
+                <h4>Mean Absolute Percentage Error : {{svmmape}}</h4>
+                <h4>Median Absolute Error : {{svmMae}}</h4>
+                <h4>R2 Score : {{svmrs}}</h4>
+            </div>
+            <div style="width: 100%; height: 100%; float: left;" id="knnmetric">
+                <h4>Accuracy : {{accuracy}}</h4>
+                <h4>F1 Score : {{f1}}</h4>
+                <h4>Recall Score : {{rs}}</h4>
+                <h4>Precision Score : {{ps}}</h4>
+            </div>
+        </div>
+        <div style="float: left; width: 32%; display: flex; justify-content: space-between; margin-left: 36%; margin-top: 4%;">
+            <button class="btns1" style="transition: 0.25s; box-shadow: 0px 0px 4px 2px green;" onclick="movem(0)">LSTM</button>
+            <button class="btns1" style="transition: 0.25s;" onclick="movem(1)">SVM</button>
+            <button class="btns1" style="transition: 0.25s;" onclick="movem(2)">KNN</button>
+            <input id="name" type="hidden" value="{{stockName}}">
+        </div>
+    </div>
+    <div style="width: 100%; height: 49.75%; border-top: 2px solid black;">
+        <h1 style="position: fixed; margin-left: 11%; margin-top: 4%;">Predicted Data</h1>
+        <div style="width: 100%; height: 50%">
+            <div style="width: 80%; height: 60%;float: left; margin-left: 15%; margin-top: 21%">
+                <h3>LSTM : {{LSTM}}</h3>
+                <h3>SVM : {{SVM}}</h3> 
+                <h3>Liner Regression : {{linearReg}}</h3>
+                <h3>KNN : {{KNN}}</h3>
+            </div>
+        </div>  
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    let temp = $('#name').val()
+    $('document').ready(function(){
+        $('#'+temp).load("http://127.0.0.1:8000/playground/image/"+temp+"/"+temp)
+        $('#LSTM').load("http://127.0.0.1:8000/playground/image/"+temp+"/lstm")
+        $('#SVM').load("http://127.0.0.1:8000/playground/image/"+temp+"/svm")
+        $('#linearReg').load("http://127.0.0.1:8000/playground/image/"+temp+"/linearReg")
+        $('#KNN').load("http://127.0.0.1:8000/playground/image/"+temp+"/knn")
+    });
+    function move(x){
+        let tempx = document.getElementsByClassName('btns')
+        let temp1 = document.getElementById(temp)
+        let temp2 = document.getElementById('LSTM')
+        let temp3 = document.getElementById('SVM')
+        let temp4 = document.getElementById('linearReg')
+        console.log(temp1)
+        if(x == 0){
+            temp1.style.marginTop = "0%";
+            temp2.style.marginTop = "0%";
+            temp3.style.marginTop = "0%";
+            temp4.style.marginTop = "0%";
+            tempx[0].style.boxShadow = "0px 0px 4px 2px green";
+            tempx[1].style.boxShadow = "none";
+            tempx[2].style.boxShadow = "none";
+            tempx[3].style.boxShadow = "none";
+            tempx[4].style.boxShadow = "none";
+        }
+        else if(x == 1){
+            temp1.style.marginTop = "-70%";
+            temp2.style.marginTop = "0%";
+            temp3.style.marginTop = "0%";
+            temp4.style.marginTop = "0%";
+            tempx[1].style.boxShadow = "0px 0px 4px 2px green";
+            tempx[0].style.boxShadow = "none";
+            tempx[2].style.boxShadow = "none";
+            tempx[3].style.boxShadow = "none";
+            tempx[4].style.boxShadow = "none";
+        }
+        else if(x == 2){
+            temp1.style.marginTop = "-70%";
+            temp2.style.marginTop = "-70%";
+            temp3.style.marginTop = "0%";
+            temp4.style.marginTop = "0%";
+            tempx[2].style.boxShadow = "0px 0px 4px 2px green";
+            tempx[1].style.boxShadow = "none";
+            tempx[0].style.boxShadow = "none";
+            tempx[3].style.boxShadow = "none";
+            tempx[4].style.boxShadow = "none";
+        }else if(x == 3){
+            temp1.style.marginTop = "-70%";
+            temp2.style.marginTop = "-70%";
+            temp3.style.marginTop = "-70%";
+            temp4.style.marginTop = "0%";
+            tempx[3].style.boxShadow = "0px 0px 4px 2px green";
+            tempx[1].style.boxShadow = "none";
+            tempx[2].style.boxShadow = "none";
+            tempx[0].style.boxShadow = "none";
+            tempx[4].style.boxShadow = "none";
+        }else{
+            temp1.style.marginTop = "-70%";
+            temp2.style.marginTop = "-70%";
+            temp3.style.marginTop = "-70%";
+            temp4.style.marginTop = "-70%";
+            tempx[4].style.boxShadow = "0px 0px 4px 2px green";
+            tempx[1].style.boxShadow = "none";
+            tempx[2].style.boxShadow = "none";
+            tempx[3].style.boxShadow = "none";
+            tempx[0].style.boxShadow = "none";
+        }
+    }
+    function movem(x){
+        let tempx = document.getElementsByClassName('btns1')
+        let temp1 = document.getElementById('lstmmetric')
+        let temp2 = document.getElementById('svmmetric')
+        let temp3 = document.getElementById('knnmetric')
+        console.log(temp1)
+        if(x == 0){
+            temp1.style.marginTop = "0%";
+            temp2.style.marginTop = "0%";
+            temp3.style.marginTop = "0%";
+            tempx[0].style.boxShadow = "0px 0px 4px 2px green";
+            tempx[1].style.boxShadow = "none";
+            tempx[2].style.boxShadow = "none";
+        }
+        else if(x == 1){
+            temp1.style.marginTop = "-44.5%";
+            temp2.style.marginTop = "0%";
+            temp3.style.marginTop = "0%";
+            tempx[1].style.boxShadow = "0px 0px 4px 2px green";
+            tempx[0].style.boxShadow = "none";
+            tempx[2].style.boxShadow = "none";
+        }
+        else if(x == 2){
+            temp1.style.marginTop = "-44.5%";
+            temp2.style.marginTop = "-44.5%";
+            temp3.style.marginTop = "0%";
+            tempx[2].style.boxShadow = "0px 0px 4px 2px green";
+            tempx[1].style.boxShadow = "none";
+            tempx[0].style.boxShadow = "none";
+        }else{
+            temp1.style.marginTop = "-44.5%";
+            temp2.style.marginTop = "-44.5%";
+            temp3.style.marginTop = "-44.5%";
+        }
+    }
+</script>
+</html>

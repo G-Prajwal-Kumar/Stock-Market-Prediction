@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+</head>
+<style>
+    html,body{
+        margin: 0 auto;
+        width: 100%;
+        height: 100%;
+    }
+
+    body{
+        background-image: url("https://drive.google.com/uc?export=view&id=14ybO_ZoUAtdDL_4JzEuTX9xOboe9lzy0");
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    #form{
+        width: 20%;
+        height: auto;
+        background-color: white;
+        box-shadow: 0px 0px 5px 5px white;
+        margin-top: 20%;
+        border-radius: 5%;
+        float: left;
+        margin-left: -31%;
+    }
+</style>
+<body>
+    <h1 style="float: left; margin-top: 3%; margin-left: 29%; color: white; font-size: 60px;">Stock Market Prediction</h1>
+    <form action="train" id="form">
+        {% csrf_token %}
+        <input id="val" type="hidden" value = "{{condition}}">
+        <input type="text" placeholder="Stock Symbol" name="stockName" style="width: 80%; display: block; background-color: white; border: 2px solid black; border-radius: 5px; padding: 5px 10px; margin-left: 6%; margin-top: 5%;">
+        <button type="submit" style="margin-left: 40%; margin-top: 5%; margin-bottom: 4%; border: 1px solid black; border-radius: 5px; padding: 3px 10px;">Train</button>
+    </form>
+</body>
+</html>
